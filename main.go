@@ -1,12 +1,13 @@
 package main
 
-import "fmt"
+import "net/http"
 
-func main() {
-	msg := sayHelloWorld("Test")
-	fmt.Println(msg)
+func SayHelloHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Hello World"))
+	w.WriteHeader(http.StatusOK)
 }
 
-func sayHelloWorld(msg string) string {
-	return "Hello, " + msg
+func main() {
+	http.HandleFunc("/hello", SayHelloHandler)
+	http.ListenAndServe(":8080", nil)
 }

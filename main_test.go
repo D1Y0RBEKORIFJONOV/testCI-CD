@@ -1,11 +1,28 @@
 package main
 
-import "testing"
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
 
-func Test_SayHello(t *testing.T) {
-	name := "Bob"
-	want := "Hello, qwer"
-	if got := sayHelloWorld(name); got != want {
-		t.Errorf("sayHelloWorld() = %v, want %v", got, want)
+func Test_SayHelloHandler(t *testing.T) {
+	req, err := http.NewRequest("GET", "/hello", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(SayHelloHandler)
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	expected := "Hello World"
+	if rr.Body.String() != expected {
+		t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), expected)
 	}
 }
